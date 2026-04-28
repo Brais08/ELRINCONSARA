@@ -19,7 +19,7 @@ body {
 }
 
 canvas {
-  touch-action: none;
+  touch-action: auto !important; /* Allow mobile scrolling over the 3D model */
 }
 
 /* Hide global scrollbar to prevent double scrollbars in Odoo iframe */
