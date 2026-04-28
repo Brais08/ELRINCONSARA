@@ -15,6 +15,9 @@ const Scene = () => {
   const gridRef = useRef<THREE.Group>(null);
   const lightRef = useRef<THREE.DirectionalLight>(null);
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const initialScale = isMobile ? 1.5 : 2.5;
+
   useGSAP(() => {
     // Delay slightly to ensure everything is mounted
     if (!ballRef.current || !pedestalRef.current || !gridRef.current) return;
@@ -30,13 +33,13 @@ const Scene = () => {
 
     // 1. Banner -> Sobre Mi
     // Glide bottle to right
-    tl.to(ballRef.current.position, { x: 3, y: -1, z: 0, duration: 2 })
-      .to(ballRef.current.scale, { x: 2.0, y: 2.0, z: 2.0, duration: 2 }, '<');
+    tl.to(ballRef.current.position, { x: isMobile ? 1.2 : 3, y: -1, z: 0, duration: 2 })
+      .to(ballRef.current.scale, { x: isMobile ? 1.2 : 2.0, y: isMobile ? 1.2 : 2.0, z: isMobile ? 1.2 : 2.0, duration: 2 }, '<');
 
     // 2. Sobre Mi -> Citas
     // Move bottle behind left calendar, raise pedestal
-    tl.to(ballRef.current.position, { x: -3, y: 2, z: -3, duration: 2.5 }, '+=1')
-      .to(ballRef.current.scale, { x: 1.2, y: 1.2, z: 1.2, duration: 2.5 }, '<')
+    tl.to(ballRef.current.position, { x: isMobile ? -1.2 : -3, y: 2, z: -3, duration: 2.5 }, '+=1')
+      .to(ballRef.current.scale, { x: isMobile ? 0.8 : 1.2, y: isMobile ? 0.8 : 1.2, z: isMobile ? 0.8 : 1.2, duration: 2.5 }, '<')
       .to(pedestalRef.current.position, { y: -4, duration: 2.5 }, '<')
       .to(gridRef.current.scale, { x: 1.5, y: 1.5, z: 1.5, duration: 2.5 }, '<');
 
@@ -67,7 +70,7 @@ const Scene = () => {
 
       {/* 3D Objects */}
       <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
-        <Basketball ref={ballRef} position={[0, 0, 0]} scale={2.5} />
+        <Basketball ref={ballRef} position={[0, 0, 0]} scale={initialScale} />
       </Float>
 
       <Pedestal ref={pedestalRef} position={[0, -10, 0]} />
