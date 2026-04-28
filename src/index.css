@@ -22,16 +22,13 @@ canvas {
   touch-action: none;
 }
 
-/* Custom scrollbar for a premium feel */
+/* Hide global scrollbar to prevent double scrollbars in Odoo iframe */
 ::-webkit-scrollbar {
-  width: 4px;
+  display: none;
 }
-::-webkit-scrollbar-track {
-  background: #000;
-}
-::-webkit-scrollbar-thumb {
-  background: #ec4899;
-  border-radius: 10px;
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .custom-scrollbar-hide::-webkit-scrollbar { display: none; }
