@@ -1,12 +1,33 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger);
 
+const SERVICES: Record<string, { id: string; name: string; link: string }[]> = {
+  MANICURAS: [
+    { id: 'manicura-basica', name: 'Manicura básica', link: 'brais-manent-miranda-kyxgw2/manicura-basica' },
+    { id: 'manicura-esmalte-tradicional', name: 'Manicura esmalte tradicional', link: 'brais-manent-miranda-kyxgw2/manicura-esmalte-tradicional' },
+    { id: 'manicura-esmalte-semipermanente', name: 'Manicura esmalte semipermanente', link: 'brais-manent-miranda-kyxgw2/manicura-esmalte-semipermanente' },
+    { id: 'manicura-con-extension', name: 'Manicura con extensión', link: 'brais-manent-miranda-kyxgw2/manicura-con-extension' },
+  ],
+  PEDICURAS: [
+    { id: 'pedicura-express', name: 'Pedicura express', link: 'brais-manent-miranda-kyxgw2/pedicura-express' },
+    { id: 'pedicura-esmalte-tradicional', name: 'Pedicura esmalte tradicional', link: 'brais-manent-miranda-kyxgw2/pedicura-esmalte-tradicional' },
+    { id: 'pedicura-esmalte-semipermanente', name: 'Pedicura esmalte semipermanente', link: 'brais-manent-miranda-kyxgw2/pedicura-esmalte-semipermanente' },
+    { id: 'pedicura-spa-sin-esmalte', name: 'Pedicura SPA sin esmalte', link: 'brais-manent-miranda-kyxgw2/pedicura-spa-sin-esmalte' },
+    { id: 'pedicura-spa-esmalte-tradicional', name: 'Pedicura SPA esmalte tradicional', link: 'brais-manent-miranda-kyxgw2/pedicura-spa-esmalte-tradicional' },
+    { id: 'pedicura-spa-esmalte-semipermanente', name: 'Pedicura SPA esmalte semipermanente', link: 'brais-manent-miranda-kyxgw2/pedicura-spa-esmalte-semipermanente' },
+  ]
+};
+
 export const UIOverlay = () => {
   const container = useRef<HTMLDivElement>(null);
+  const [selectedCategory, setSelectedCategory] = useState<keyof typeof SERVICES>('MANICURAS');
+  const [selectedServiceId, setSelectedServiceId] = useState(SERVICES['MANICURAS'][0].id);
+
+  const activeService = [...SERVICES.MANICURAS, ...SERVICES.PEDICURAS].find(s => s.id === selectedServiceId)!;
 
   useGSAP(() => {
     // Fade in Sobre Mi content when it enters viewport
@@ -59,7 +80,7 @@ export const UIOverlay = () => {
   }, { scope: container });
 
   useEffect(() => {
-    // Cal inline embed code
+    // Initialize Cal.com library once
     (function (C: any, A, L) {
       let p = function (a: any, ar: any) { a.q.push(ar); };
       let d = C.document;
@@ -85,24 +106,27 @@ export const UIOverlay = () => {
         p(cal, ar);
       };
     })(window, "https://app.cal.com/embed/embed.js", "init");
-
-    const Cal = (window as any).Cal;
-    Cal("init", "mani-base", {origin:"https://app.cal.com"});
-    Cal.ns["mani-base"]("inline", {
-      elementOrSelector:"#my-cal-inline-mani-base",
-      config: {"layout":"month_view","useSlotsViewOnSmallScreen":"true"},
-      calLink: "brais-manent-miranda-kyxgw2/mani-base",
-    });
-    Cal.ns["mani-base"]("ui", {"cssVarsPerTheme":{"light":{"cal-brand":"#ec4899"},"dark":{"cal-brand":"#ec4899"}},"hideEventTypeDetails":false,"layout":"month_view"});
-
-    Cal("init", "mani-comple", {origin:"https://app.cal.com"});
-    Cal.ns["mani-comple"]("inline", {
-      elementOrSelector:"#my-cal-inline-mani-comple",
-      config: {"layout":"month_view","useSlotsViewOnSmallScreen":"true"},
-      calLink: "brais-manent-miranda-kyxgw2/mani-comple",
-    });
-    Cal.ns["mani-comple"]("ui", {"cssVarsPerTheme":{"light":{"cal-brand":"#ec4899"},"dark":{"cal-brand":"#ec4899"}},"hideEventTypeDetails":false,"layout":"month_view"});
   }, []);
+
+  useEffect(() => {
+    const Cal = (window as any).Cal;
+    if (!Cal) return;
+
+    // Initialize the specific namespace for the selected service
+    const ns = activeService.id;
+    Cal("init", ns, { origin: "https://app.cal.com" });
+    Cal.ns[ns]("inline", {
+      elementOrSelector: `#my-cal-inline-${ns}`,
+      config: { "layout": "month_view", "useSlotsViewOnSmallScreen": "true" },
+      calLink: activeService.link,
+    });
+    Cal.ns[ns]("ui", { "hideEventTypeDetails": false, "layout": "month_view" });
+  }, [activeService]);
+
+  const handleCategoryChange = (cat: keyof typeof SERVICES) => {
+    setSelectedCategory(cat);
+    setSelectedServiceId(SERVICES[cat][0].id);
+  };
 
   return (
     <div ref={container} className="relative z-10 w-full pointer-events-none">
@@ -167,38 +191,78 @@ export const UIOverlay = () => {
       </section>
 
       {/* ───────────────────────────── CITAS ───────────────────────────── */}
-      <section id="citas" className="min-h-[120vh] w-full pt-32 pb-48 px-4 md:px-12 flex flex-col items-center pointer-events-none relative z-10">
-         <h2 id="citas-title" className="text-6xl md:text-8xl font-sans uppercase text-white mb-16 text-center opacity-0 drop-shadow-[0_10px_30px_rgba(236,72,153,0.3)]">
+      <section id="citas" className="min-h-screen w-full pt-32 pb-48 px-4 md:px-12 flex flex-col items-center pointer-events-none relative z-10">
+         <h2 id="citas-title" className="text-6xl md:text-8xl font-sans uppercase text-white mb-8 text-center opacity-0 drop-shadow-[0_10px_30px_rgba(236,72,153,0.3)]">
             Reserva tu cita<span className="text-pink-500">.</span>
          </h2>
-         <div id="citas-content" className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 pointer-events-auto opacity-0 translate-y-24">
+         
+         <div id="citas-content" className="w-full max-w-5xl pointer-events-auto opacity-0 translate-y-24 flex flex-col gap-8">
             
-            <div className="group bg-black/60 backdrop-blur-3xl rounded-[2.5rem] p-6 md:p-10 border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.8)] relative overflow-hidden transition-all duration-500 hover:border-pink-500/50">
-                <div className="absolute inset-0 bg-gradient-to-b from-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <div className="relative z-10 flex items-center justify-between mb-8 px-4">
-                    <h3 className="font-sans text-3xl md:text-4xl text-white tracking-widest uppercase drop-shadow-md">Base</h3>
-                    <div className="h-[2px] flex-1 mx-8 bg-gradient-to-r from-pink-500 to-transparent opacity-50" />
-                </div>
-                <div id="my-cal-inline-mani-base" className="relative z-10 w-full min-h-[700px] overflow-y-auto overflow-x-hidden rounded-3xl bg-black/80 shadow-inner custom-scrollbar-hide"></div>
-            </div>
-            
-            <div className="group bg-black/60 backdrop-blur-3xl rounded-[2.5rem] p-6 md:p-10 border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.8)] relative overflow-hidden transition-all duration-500 hover:border-pink-500/50">
-                <div className="absolute inset-0 bg-gradient-to-b from-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <div className="relative z-10 flex items-center justify-between mb-8 px-4">
-                    <h3 className="font-sans text-3xl md:text-4xl text-white tracking-widest uppercase drop-shadow-md">Completa</h3>
-                    <div className="h-[2px] flex-1 mx-8 bg-gradient-to-r from-pink-500 to-transparent opacity-50" />
-                </div>
-                <div id="my-cal-inline-mani-comple" className="relative z-10 w-full min-h-[700px] overflow-y-auto overflow-x-hidden rounded-3xl bg-black/80 shadow-inner custom-scrollbar-hide"></div>
+            {/* Category Filter */}
+            <div className="flex justify-center gap-4">
+              {(Object.keys(SERVICES) as Array<keyof typeof SERVICES>).map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => handleCategoryChange(cat)}
+                  className={`px-8 py-3 rounded-full font-sans text-lg tracking-widest uppercase transition-all duration-300 border ${
+                    selectedCategory === cat
+                      ? 'bg-pink-500 text-white border-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.5)]'
+                      : 'bg-white/5 text-pink-300 border-white/10 hover:bg-white/10'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
             </div>
 
+            {/* Service Selection */}
+            <div className="flex flex-wrap justify-center gap-3">
+              {SERVICES[selectedCategory].map((service) => (
+                <button
+                  key={service.id}
+                  onClick={() => setSelectedServiceId(service.id)}
+                  className={`px-6 py-2 rounded-xl font-sans text-sm tracking-wider uppercase transition-all duration-300 border ${
+                    selectedServiceId === service.id
+                      ? 'bg-white/20 text-white border-white/40 shadow-lg'
+                      : 'bg-black/40 text-gray-400 border-white/5 hover:border-white/20'
+                  }`}
+                >
+                  {service.name}
+                </button>
+              ))}
+            </div>
+
+            {/* Booking Card */}
+            <div className="group bg-black/60 backdrop-blur-3xl rounded-[2.5rem] p-6 md:p-10 border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.8)] relative overflow-hidden transition-all duration-500 hover:border-pink-500/30">
+                <div className="absolute inset-0 bg-gradient-to-b from-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                
+                <div className="relative z-10 flex items-center justify-between mb-8 px-4">
+                    <h3 className="font-sans text-2xl md:text-3xl text-white tracking-widest uppercase drop-shadow-md">
+                      {activeService.name}
+                    </h3>
+                    <div className="h-[2px] flex-1 mx-8 bg-gradient-to-r from-pink-500/50 to-transparent opacity-50" />
+                </div>
+
+                {/* Cal.com Containers - We keep them all in DOM but only show the active one to ensure script initialization works */}
+                {[...SERVICES.MANICURAS, ...SERVICES.PEDICURAS].map((service) => (
+                  <div
+                    key={service.id}
+                    id={`my-cal-inline-${service.id}`}
+                    className={`relative z-10 w-full min-h-[600px] md:min-h-[700px] overflow-y-auto overflow-x-hidden rounded-3xl bg-black/80 shadow-inner custom-scrollbar-hide ${
+                      selectedServiceId === service.id ? 'block' : 'hidden'
+                    }`}
+                  ></div>
+                ))}
+            </div>
          </div>
       </section>
 
       {/* ───────────────────────────── WHATSAPP FLOAT ───────────────────────────── */}
-      <a href="https://wa.me/34657331751?text=Hola%20Sara%2C%20tengo%20una%20duda" target="_blank" rel="noreferrer" className="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(37,211,102,0.6)] z-50 pointer-events-auto hover:scale-110 hover:-translate-y-2 transition-all duration-300 border-2 border-white/20">
+      <a href="https://wa.me/34623386030?text=Hola%20Sara%2C%20tengo%20una%20duda" target="_blank" rel="noreferrer" className="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(37,211,102,0.6)] z-50 pointer-events-auto hover:scale-110 hover:-translate-y-2 transition-all duration-300 border-2 border-white/20">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" className="w-8 h-8" />
       </a>
 
     </div>
   );
 };
+
