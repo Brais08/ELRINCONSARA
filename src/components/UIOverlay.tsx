@@ -7,18 +7,18 @@ gsap.registerPlugin(ScrollTrigger);
 
 const SERVICES: Record<string, { id: string; name: string; link: string }[]> = {
   MANICURAS: [
-    { id: 'manicura-basica', name: 'Manicura básica', link: 'brais-manent-miranda-kyxgw2/manicura-basica' },
-    { id: 'manicura-esmalte-tradicional', name: 'Manicura esmalte tradicional', link: 'brais-manent-miranda-kyxgw2/manicura-esmalte-tradicional' },
-    { id: 'manicura-esmalte-semipermanente', name: 'Manicura esmalte semipermanente', link: 'brais-manent-miranda-kyxgw2/manicura-esmalte-semipermanente' },
-    { id: 'manicura-con-extension', name: 'Manicura con extensión', link: 'brais-manent-miranda-kyxgw2/manicura-con-extension' },
+    { id: 'manicura-basica', name: 'Manicura básica', link: 'saranails/manicura-basica' },
+    { id: 'manicura-esmalte-tradicional', name: 'Manicura esmalte tradicional', link: 'saranails/manicura-esmalte-tradicional' },
+    { id: 'manicura-esmalte-semipermanente', name: 'Manicura esmalte semipermanente', link: 'saranails/manicura-esmalte-semipermanente' },
+    { id: 'manicura-con-extension', name: 'Manicura con extensión', link: 'saranails/manicura-con-extension' },
   ],
   PEDICURAS: [
-    { id: 'pedicura-express', name: 'Pedicura express', link: 'brais-manent-miranda-kyxgw2/pedicura-express' },
-    { id: 'pedicura-esmalte-tradicional', name: 'Pedicura esmalte tradicional', link: 'brais-manent-miranda-kyxgw2/pedicura-esmalte-tradicional' },
-    { id: 'pedicura-esmalte-semipermanente', name: 'Pedicura esmalte semipermanente', link: 'brais-manent-miranda-kyxgw2/pedicura-esmalte-semipermanente' },
-    { id: 'pedicura-spa-sin-esmalte', name: 'Pedicura SPA sin esmalte', link: 'brais-manent-miranda-kyxgw2/pedicura-spa-sin-esmalte' },
-    { id: 'pedicura-spa-esmalte-tradicional', name: 'Pedicura SPA esmalte tradicional', link: 'brais-manent-miranda-kyxgw2/pedicura-spa-esmalte-tradicional' },
-    { id: 'pedicura-spa-esmalte-semipermanente', name: 'Pedicura SPA esmalte semipermanente', link: 'brais-manent-miranda-kyxgw2/pedicura-spa-esmalte-semipermanente' },
+    { id: 'pedicura-express', name: 'Pedicura express', link: 'saranails/pedicura-express' },
+    { id: 'pedicura-esmalte-tradicional', name: 'Pedicura esmalte tradicional', link: 'saranails/pedicura-esmalte-tradicionan' },
+    { id: 'pedicura-esmalte-semipermanente', name: 'Pedicura esmalte semipermanente', link: 'saranails/pedicura-esmalte-semipermanente' },
+    { id: 'pedicura-spa-sin-esmalte', name: 'Pedicura SPA sin esmalte', link: 'saranails/pedicura-spa-sin-esmalte' },
+    { id: 'pedicura-spa-esmalte-tradicional', name: 'Pedicura SPA esmalte tradicional', link: 'saranails/pedicura-spa-esmalte-tradicional' },
+    { id: 'pedicura-spa-esmalte-semipermanente', name: 'Pedicura SPA esmalte semipermanente', link: 'saranails/pedicura-spa-esmalte-semipermanente' },
   ]
 };
 
